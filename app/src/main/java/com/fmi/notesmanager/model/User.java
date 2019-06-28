@@ -9,6 +9,8 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
 
+    private Integer id;
+
     private String username;
 
     private String password;
@@ -18,10 +20,16 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String username, String password, String email) {
+    public User(Integer id, String username, String password, String email) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    @JsonGetter("id")
+    public Integer getId() {
+        return id;
     }
 
     @JsonGetter("username")
@@ -37,6 +45,11 @@ public class User implements Serializable {
     @JsonGetter("email")
     public String getEmail() {
         return email;
+    }
+
+    @JsonSetter("id")
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @JsonSetter("username")
@@ -57,7 +70,8 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "id=" + id +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 '}';

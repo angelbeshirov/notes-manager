@@ -12,14 +12,14 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 public class StoreUserAsyncTask extends AsyncTask<Void, Void, Void> {
-    public static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/register";
+    private static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/register";
 
     private final User user;
-    private final UserCallback userCallback;
+    private final UserCallback<User> userCallback;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public StoreUserAsyncTask(User user, UserCallback userCallback, RestTemplate restTemplate) {
+    public StoreUserAsyncTask(User user, UserCallback<User> userCallback, RestTemplate restTemplate) {
         this.user = user;
         this.userCallback = userCallback;
         this.restTemplate = restTemplate;
@@ -28,7 +28,7 @@ public class StoreUserAsyncTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        HttpEntity<String> request = null;
+        HttpEntity<String> request;
         try {
             request = new HttpEntity<>(objectMapper.writeValueAsString(user));
             restTemplate.postForObject(SERVER_ADDRESS, request, String.class);

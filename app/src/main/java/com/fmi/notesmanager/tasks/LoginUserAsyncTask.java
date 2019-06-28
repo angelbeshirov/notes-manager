@@ -30,13 +30,15 @@ public class LoginUserAsyncTask extends AsyncTask<Void, Void, User> {
 
     @Override
     protected User doInBackground(Void... voids) {
-        HttpEntity<String> request = null;
+        HttpEntity<String> request;
         User returnedUser = null;
         try {
             System.out.println("Sending " + objectMapper.writeValueAsString(user));
             request = new HttpEntity<>(objectMapper.writeValueAsString(user));
             ResponseEntity<String> response = restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
-            returnedUser = objectMapper.readValue(response.getBody(), User.class);
+            if (response != null && response.getBody() != null) {
+                returnedUser = objectMapper.readValue(response.getBody(), User.class);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

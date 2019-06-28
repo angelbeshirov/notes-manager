@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin:
                 final String username = etUsername.getText().toString();
                 final String password = etPassword.getText().toString();
-                User user = new User(username, password, null);
+                User user = new User(null, username, password, null);
                 System.out.println("Starting logging in, sending user: " + user.toString());
                 authenticate(user);
                 break;
@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void authenticate(User user) {
         ServerRequest serverRequest = new ServerRequest(restTemplate);
-        serverRequest.fetchUserDataInBackground(user, new UserCallback() {
+        serverRequest.fetchUserDataInBackground(user, new UserCallback<User>() {
 
             @Override
             public void done(User returnedUser) {

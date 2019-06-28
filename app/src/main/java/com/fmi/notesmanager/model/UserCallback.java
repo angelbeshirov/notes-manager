@@ -1,6 +1,6 @@
 package com.fmi.notesmanager.model;
 
-public interface UserCallback {
+public interface UserCallback<T> {
 
-    void done(final User returnedUser);
+    void done(final T returnedUser);
 }
