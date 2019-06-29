@@ -6,22 +6,24 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.io.Serializable;
 
+/**
+ * The object representation of the note.
+ *
+ * @author angel.beshirov
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Note implements Serializable {
 
-    private Integer id;
-
+    private Long id;
     private String title;
-
     private String content;
-
     private String datetime;
 
     public Note() {
 
     }
 
-    public Note(Integer id, String title, String content, String datetime) {
+    public Note(Long id, String title, String content, String datetime) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -29,7 +31,7 @@ public class Note implements Serializable {
     }
 
     @JsonSetter("id")
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -49,7 +51,7 @@ public class Note implements Serializable {
     }
 
     @JsonGetter("id")
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

@@ -7,47 +7,45 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cursoradapter.widget.CursorAdapter;
 
 import com.fmi.notesmanager.R;
+import com.fmi.notesmanager.interaction.Callback;
+import com.fmi.notesmanager.interaction.NotesAdapter;
+import com.fmi.notesmanager.interaction.ServerRequest;
+import com.fmi.notesmanager.interaction.UserLocalStore;
 import com.fmi.notesmanager.model.Note;
-import com.fmi.notesmanager.model.ServerRequest;
 import com.fmi.notesmanager.model.User;
-import com.fmi.notesmanager.model.UserCallback;
-import com.fmi.notesmanager.model.UserLocalStore;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+/**
+ * This is the main activity which the user sees after log in. Overrides {@link AppCompatActivity#onCreate(Bundle)},
+ * {@link AppCompatActivity#onStart()}, {@link AppCompatActivity#onCreateOptionsMenu(Menu)}
+ * and {@link AppCompatActivity#onOptionsItemSelected(MenuItem)}.
+ *
+ * @author angel.beshirov
+ */
+public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int REQUEST_CODE_EDIT = 1;
     private final RestTemplate restTemplate = new RestTemplate();
 
-
-    private static final int EDITOR_REQUEST_CODE = 1001;
-
-//    private CursorAdapter cursorAdapter;
-    private Toolbar toolbar;
     private ListView listView;
     private UserLocalStore userLocalStore;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         userLocalStore = new UserLocalStore(this);
 
         setSupportActionBar(toolbar);
@@ -57,20 +55,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-//                Uri uri = Uri.parse(NotesProvider.CONTENT_URI + "/" + id);
-//                intent.putExtra(NotesProvider.CONTENT_ITEM_TYPE, uri);
-//                startActivityForResult(intent, EDITOR_REQUEST_CODE);
-
-                System.out.println("Clicked item" + id);
-                System.out.println("Clicked the fab");
-                startActivity(new Intent(MainActivity.this, EditorActivity.class));
+                final Note note = (Note) parent.getItemAtPosition(position);
+                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+                intent.putExtra("id", note.getId());
+                startActivityForResult(intent, REQUEST_CODE_EDIT);
             }
         });
-
-//        getLoaderManager().initLoader(0, null, this);
-
-
     }
 
 
@@ -82,11 +72,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             startActivity(new Intent(this, LoginActivity.class));
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-
     }
 
     @Override
@@ -105,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 userLocalStore.setUserLoggedIn(false);
                 startActivity(new Intent(this, LoginActivity.class));
                 break;
+            case R.id.action_create:
+                startActivity(new Intent(this, EditorActivity.class));
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -118,24 +106,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ServerRequest serverRequest = new ServerRequest(restTemplate);
         final User user = userLocalStore.getLoggedInUser();
 
-        serverRequest.retrieveAllNotesForUser(user, new UserCallback<List<Note>>() {
+        serverRequest.retrieveAllNotesForUser(user, new Callback<List<Note>>() {
             @Override
             public void done(List<Note> notes) {
                 NotesAdapter notesAdapter = new NotesAdapter(MainActivity.this, android.R.layout.activity_list_item, notes);
                 listView.setAdapter(notesAdapter);
-            }
-        });
-    }
-
-    private void openEditorNewNote() {
-        FloatingActionButton fab = findViewById(R.id.fab_newNote);
-        fab.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                System.out.println("Clicked the fab");
-                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-//                startActivityForResult(intent, EDITOR_REQUEST_CODE);
             }
         });
     }

@@ -10,13 +10,14 @@
     <include layout="@layout/toolbar_layout"/>
 
     <EditText
+        android:id="@+id/etTitle"
+        android:gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
         android:id="@+id/etEditor"
         android:gravity="top"
         android:layout_width="match_parent"
-        android:text="Dummy Text, Just to see how it wil look when there is a lot of text added here :P"
         android:layout_height="match_parent" />
-
-
-
-
 </LinearLayout>

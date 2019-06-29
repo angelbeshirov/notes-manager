@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fmi.notesmanager.model.User;
-import com.fmi.notesmanager.model.UserCallback;
+import com.fmi.notesmanager.interaction.Callback;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -12,20 +12,25 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
+/**
+ * Async task for logging in user into the application.
+ *
+ * @author angel.beshirov
+ */
 public class LoginUserAsyncTask extends AsyncTask<Void, Void, User> {
 
-    public static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/login";
+    private static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/login";
 
     private User user;
-    private UserCallback userCallback;
+    private Callback<User> userCallback;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public LoginUserAsyncTask(User user, UserCallback userCallback, RestTemplate restTemplate) {
+    public LoginUserAsyncTask(User user, ObjectMapper objectMapper, Callback<User> userCallback, RestTemplate restTemplate) {
         this.user = user;
+        this.objectMapper = objectMapper;
         this.userCallback = userCallback;
         this.restTemplate = restTemplate;
-        this.objectMapper = new ObjectMapper();
     }
 
     @Override
@@ -33,7 +38,6 @@ public class LoginUserAsyncTask extends AsyncTask<Void, Void, User> {
         HttpEntity<String> request;
         User returnedUser = null;
         try {
-            System.out.println("Sending " + objectMapper.writeValueAsString(user));
             request = new HttpEntity<>(objectMapper.writeValueAsString(user));
             ResponseEntity<String> response = restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
             if (response != null && response.getBody() != null) {

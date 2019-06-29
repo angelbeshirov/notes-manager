@@ -1,38 +1,71 @@
 package com.fmi.notesmanager.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 
-import com.fmi.notesmanager.R;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import com.fmi.notesmanager.R;
+import com.fmi.notesmanager.interaction.Callback;
+import com.fmi.notesmanager.interaction.ServerRequest;
+import com.fmi.notesmanager.interaction.UserLocalStore;
+import com.fmi.notesmanager.model.Note;
+import com.fmi.notesmanager.model.User;
+
+import org.springframework.web.client.RestTemplate;
+
+/**
+ * The activity for creating, editing and deleting notes. Overrides {@link AppCompatActivity#onCreate(Bundle)},
+ * {@link AppCompatActivity#onCreateOptionsMenu(Menu)} and {@link AppCompatActivity#onOptionsItemSelected(MenuItem)}.
+ *
+ * @author angel.beshirov
+ */
 public class EditorActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private EditText editText;
+    public static final String NEW_NOTE = "New note";
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    private EditText title;
+    private EditText content;
+    private User user;
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        toolbar = findViewById(R.id.toolbar);
-        editText = findViewById(R.id.etEditor);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        title = findViewById(R.id.etTitle);
+        content = findViewById(R.id.etEditor);
 
-        editText.setText("NA MASMDAM DOA SDAS OJIAS DASD ASD ASD AS DPYUTKATAKA" +
-                "" +
-                "" +
-                "" +
-                "asdasdasdasdasda" +
-                "a" +
-                "sa" +
-                "sd" +
-                "asd" +
-                "asd");
+        final UserLocalStore userLocalStore = new UserLocalStore(this);
+        user = userLocalStore.getLoggedInUser();
+
+        Intent intent = getIntent();
+        id = intent.getLongExtra("id", -1L);
+
+        if (id != -1) {
+            final ServerRequest serverRequest = new ServerRequest(restTemplate);
+            serverRequest.retrieveSpecificNote(id, new Callback<Note>() {
+                @Override
+                public void done(Note retrievedNote) {
+                    if (retrievedNote != null) {
+                        title.setText(retrievedNote.getTitle());
+                        content.setText(retrievedNote.getContent());
+                    }
+                }
+            });
+        } else {
+            title.setText(NEW_NOTE);
+        }
         setSupportActionBar(toolbar);
     }
 
@@ -42,5 +75,40 @@ public class EditorActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.app_bar_menu_editor, menu);
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        ServerRequest serverRequest = new ServerRequest(restTemplate);
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                if (id != -1) {
+                    final Note updatedNote = new Note(id, title.getText().toString(), content.getText().toString(), null);
+                    serverRequest.updateNoteInBackground(updatedNote, new Callback() {
+                        @Override
+                        public void done(Object result) {
+                            startActivity(new Intent(EditorActivity.this, MainActivity.class));
+                        }
+                    });
+                } else {
+                    final Note newNote = new Note(null, title.getText().toString(), content.getText().toString(), null);
+                    serverRequest.createNoteInBackground(user, newNote, new Callback() {
+                        @Override
+                        public void done(Object result) {
+                            startActivity(new Intent(EditorActivity.this, MainActivity.class));
+                        }
+                    });
+                }
+                break;
+            case R.id.action_delete:
+                serverRequest.deleteNoteInBackground(id, new Callback() {
+                    @Override
+                    public void done(Object result) {
+                        startActivity(new Intent(EditorActivity.this, MainActivity.class));
+                    }
+                });
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

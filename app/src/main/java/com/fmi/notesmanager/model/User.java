@@ -6,15 +6,18 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.io.Serializable;
 
+
+/**
+ * The object representation of the user.
+ *
+ * @author angel.beshirov
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
 
     private Integer id;
-
     private String username;
-
     private String password;
-
     private String email;
 
     public User() {

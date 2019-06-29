@@ -1,32 +1,35 @@
 package com.fmi.notesmanager.activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.fmi.notesmanager.R;
-import com.fmi.notesmanager.model.ServerRequest;
+import com.fmi.notesmanager.interaction.Callback;
+import com.fmi.notesmanager.interaction.ServerRequest;
+import com.fmi.notesmanager.interaction.UserLocalStore;
 import com.fmi.notesmanager.model.User;
-import com.fmi.notesmanager.model.UserCallback;
-import com.fmi.notesmanager.model.UserLocalStore;
 
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * The login activity which overrides {@link AppCompatActivity#onCreate(Bundle)}
+ * and {@link View.OnClickListener#onClick(View)}.
+ *
+ * @author angel.beshirov
+ */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    Button btnLogin;
-    EditText etUsername;
-    EditText etPassword;
-    TextView tvRegisterLink;
-    UserLocalStore userLocalStore;
+    private EditText etUsername;
+    private EditText etPassword;
+    private UserLocalStore userLocalStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,16 +39,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
 
-        btnLogin = findViewById(R.id.btnLogin);
+        Button btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
 
-        tvRegisterLink = findViewById(R.id.tvRegisterLink);
         userLocalStore = new UserLocalStore(this);
     }
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.btnLogin:
                 final String username = etUsername.getText().toString();
                 final String password = etPassword.getText().toString();
@@ -61,16 +63,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void authenticate(User user) {
         ServerRequest serverRequest = new ServerRequest(restTemplate);
-        serverRequest.fetchUserDataInBackground(user, new UserCallback<User>() {
-
+        serverRequest.fetchUserDataInBackground(user, new Callback<User>() {
             @Override
-            public void done(User returnedUser) {
-                System.out.println("Done logging in");
-                System.out.println("Returned user is" + returnedUser);
-                if(returnedUser == null) {
+            public void done(User result) {
+                if (result == null) {
                     showErrorMessage();
                 } else {
-                    loginUser(returnedUser);
+                    loginUser(result);
                 }
             }
         });

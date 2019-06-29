@@ -2,11 +2,9 @@ package com.fmi.notesmanager.tasks;
 
 import android.os.AsyncTask;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fmi.notesmanager.model.Note;
-import com.fmi.notesmanager.model.User;
 import com.fmi.notesmanager.interaction.Callback;
+import com.fmi.notesmanager.model.Note;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,36 +14,34 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Async task for retrieving all notes for a particular user from the server.
+ * Async task for retrieving specific note for user from the server.
  *
  * @author angel.beshirov
  */
-public class RetrieveAllNotesAsyncTask extends AsyncTask<Void, Void, List<Note>> {
-    private static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/get_all_notes";
+public class RetrieveSpecificNoteAsyncTask extends AsyncTask<Void, Void, Note> {
+    private static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/get_note";
 
-    private final User user;
-    private final Callback<List<Note>> userCallback;
+    private final long noteID;
+    private final Callback<Note> userCallback;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public RetrieveAllNotesAsyncTask(User user, ObjectMapper objectMapper, Callback<List<Note>> userCallback, RestTemplate restTemplate) {
-        this.user = user;
+    public RetrieveSpecificNoteAsyncTask(long noteID, ObjectMapper objectMapper, Callback<Note> userCallback, RestTemplate restTemplate) {
+        this.noteID = noteID;
         this.objectMapper = objectMapper;
         this.userCallback = userCallback;
         this.restTemplate = restTemplate;
     }
 
     @Override
-    protected List<Note> doInBackground(Void... voids) {
-        List<Note> result = new ArrayList<>();
+    protected Note doInBackground(Void... voids) {
+        Note note = null;
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
-                .queryParam("id", user.getId());
+                .queryParam("id", noteID);
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
@@ -57,19 +53,18 @@ public class RetrieveAllNotesAsyncTask extends AsyncTask<Void, Void, List<Note>>
 
         if (response != null && response.getBody() != null) {
             try {
-                result = objectMapper.readValue(response.getBody(), new TypeReference<List<Note>>() {
-                });
+                note = objectMapper.readValue(response.getBody(), Note.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        return result;
+        return note;
     }
 
     @Override
-    protected void onPostExecute(List<Note> notes) {
-        super.onPostExecute(notes);
-        userCallback.done(notes);
+    protected void onPostExecute(Note note) {
+        super.onPostExecute(note);
+        userCallback.done(note);
     }
 }
