@@ -41,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
     private UserLocalStore userLocalStore;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         userLocalStore = new UserLocalStore(this);
 
         setSupportActionBar(toolbar);
@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
                 final Note note = (Note) parent.getItemAtPosition(position);
-                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+                final Intent intent = new Intent(MainActivity.this, EditorActivity.class);
                 intent.putExtra("id", note.getId());
                 startActivityForResult(intent, REQUEST_CODE_EDIT);
             }
@@ -75,15 +75,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        final MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.app_bar_menu, menu);
 
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_logout:
                 userLocalStore.clear();
@@ -103,13 +103,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayUserNotes() {
-        ServerRequest serverRequest = new ServerRequest(restTemplate);
+        final ServerRequest serverRequest = new ServerRequest(restTemplate);
         final User user = userLocalStore.getLoggedInUser();
 
         serverRequest.retrieveAllNotesForUser(user, new Callback<List<Note>>() {
             @Override
-            public void done(List<Note> notes) {
-                NotesAdapter notesAdapter = new NotesAdapter(MainActivity.this, android.R.layout.activity_list_item, notes);
+            public void done(final List<Note> notes) {
+                final NotesAdapter notesAdapter = new NotesAdapter(MainActivity.this, android.R.layout.activity_list_item, notes);
                 listView.setAdapter(notesAdapter);
             }
         });

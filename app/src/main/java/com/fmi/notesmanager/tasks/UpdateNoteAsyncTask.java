@@ -24,7 +24,7 @@ public class UpdateNoteAsyncTask extends AsyncTask<Void, Void, Void> {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public UpdateNoteAsyncTask(Note note, ObjectMapper objectMapper, Callback<?> userCallback, RestTemplate restTemplate) {
+    public UpdateNoteAsyncTask(final Note note, final ObjectMapper objectMapper, final Callback<?> userCallback, final RestTemplate restTemplate) {
         this.userCallback = userCallback;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
@@ -32,12 +32,12 @@ public class UpdateNoteAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-        HttpEntity<String> request;
+    protected Void doInBackground(final Void... voids) {
+        final HttpEntity<String> request;
         try {
             request = new HttpEntity<>(objectMapper.writeValueAsString(note));
             restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -45,7 +45,7 @@ public class UpdateNoteAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(final Void aVoid) {
         userCallback.done(null);
         super.onPostExecute(aVoid);
     }

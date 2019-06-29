@@ -36,7 +36,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
@@ -45,23 +45,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         etPassword = findViewById(R.id.etPassword);
         etRepeatPassword = findViewById(R.id.etRepeatPassword);
 
-        Button btnRegister = findViewById(R.id.btnRegister);
+        final Button btnRegister = findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.btnRegister:
                 final String username = etUsername.getText().toString();
                 final String email = etEmail.getText().toString();
                 final String password = etPassword.getText().toString();
                 if (validate()) {
-                    User user = new User(null, username, password, email);
-                    ServerRequest serverRequest = new ServerRequest(restTemplate);
+                    final User user = new User(null, username, password, email);
+                    final ServerRequest serverRequest = new ServerRequest(restTemplate);
                     serverRequest.storeUserDataInBackground(user, new Callback() {
                         @Override
-                        public void done(Object result) {
+                        public void done(final Object result) {
                             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         }
                     });
@@ -90,8 +90,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         return true;
     }
 
-    private void makeDialog(String message) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
+    private void makeDialog(final String message) {
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(RegisterActivity.this);
         dialogBuilder.setMessage(message);
         dialogBuilder.setPositiveButton("OK", null);
         dialogBuilder.show();

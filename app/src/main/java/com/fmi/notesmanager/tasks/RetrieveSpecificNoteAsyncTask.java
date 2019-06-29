@@ -28,7 +28,7 @@ public class RetrieveSpecificNoteAsyncTask extends AsyncTask<Void, Void, Note> {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public RetrieveSpecificNoteAsyncTask(long noteID, ObjectMapper objectMapper, Callback<Note> userCallback, RestTemplate restTemplate) {
+    public RetrieveSpecificNoteAsyncTask(final long noteID, final ObjectMapper objectMapper, final Callback<Note> userCallback, final RestTemplate restTemplate) {
         this.noteID = noteID;
         this.objectMapper = objectMapper;
         this.userCallback = userCallback;
@@ -36,16 +36,16 @@ public class RetrieveSpecificNoteAsyncTask extends AsyncTask<Void, Void, Note> {
     }
 
     @Override
-    protected Note doInBackground(Void... voids) {
+    protected Note doInBackground(final Void... voids) {
         Note note = null;
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
                 .queryParam("id", noteID);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        final HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        HttpEntity<String> response = restTemplate.exchange(
+        final HttpEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
                 entity,
@@ -54,7 +54,7 @@ public class RetrieveSpecificNoteAsyncTask extends AsyncTask<Void, Void, Note> {
         if (response != null && response.getBody() != null) {
             try {
                 note = objectMapper.readValue(response.getBody(), Note.class);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
@@ -63,7 +63,7 @@ public class RetrieveSpecificNoteAsyncTask extends AsyncTask<Void, Void, Note> {
     }
 
     @Override
-    protected void onPostExecute(Note note) {
+    protected void onPostExecute(final Note note) {
         super.onPostExecute(note);
         userCallback.done(note);
     }

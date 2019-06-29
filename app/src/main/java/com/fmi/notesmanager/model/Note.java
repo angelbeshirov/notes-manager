@@ -22,24 +22,24 @@ public class Note implements Serializable {
 
     }
 
-    public Note(Long id, String title, String content) {
+    public Note(final Long id, final String title, final String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
     @JsonSetter("id")
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
     @JsonSetter("title")
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
     @JsonSetter("content")
-    public void setContent(String content) {
+    public void setContent(final String content) {
         this.content = content;
     }
 

@@ -23,12 +23,12 @@ public class UserLocalStore {
     private static final String LOGGED_IN = "loggedIn";
     private final SharedPreferences userLocalDatabase;
 
-    public UserLocalStore(Context context) {
+    public UserLocalStore(final Context context) {
         userLocalDatabase = context.getSharedPreferences(SP_NAME, 0);
     }
 
-    public void storeUserData(User user) {
-        SharedPreferences.Editor spEditor = userLocalDatabase.edit();
+    public void storeUserData(final User user) {
+        final SharedPreferences.Editor spEditor = userLocalDatabase.edit();
         spEditor.putInt(ID, user.getId());
         spEditor.putString(USERNAME, user.getUsername());
         spEditor.putString(PASSWORD, user.getPassword());
@@ -38,23 +38,23 @@ public class UserLocalStore {
     }
 
     public User getLoggedInUser() {
-        Integer id = userLocalDatabase.getInt(ID, NO_ID);
-        String username = userLocalDatabase.getString(USERNAME, EMPTY_STRING);
-        String email = userLocalDatabase.getString(EMAIL, EMPTY_STRING);
-        String password = userLocalDatabase.getString(PASSWORD, EMPTY_STRING);
+        final Integer id = userLocalDatabase.getInt(ID, NO_ID);
+        final String username = userLocalDatabase.getString(USERNAME, EMPTY_STRING);
+        final String email = userLocalDatabase.getString(EMAIL, EMPTY_STRING);
+        final String password = userLocalDatabase.getString(PASSWORD, EMPTY_STRING);
 
         return new User(id, username, password, email);
     }
 
-    public void setUserLoggedIn(boolean loggedIn) {
-        SharedPreferences.Editor spEditor = userLocalDatabase.edit();
+    public void setUserLoggedIn(final boolean loggedIn) {
+        final SharedPreferences.Editor spEditor = userLocalDatabase.edit();
         spEditor.putBoolean(LOGGED_IN, loggedIn);
 
         spEditor.apply();
     }
 
     public void clear() {
-        SharedPreferences.Editor spEditor = userLocalDatabase.edit();
+        final SharedPreferences.Editor spEditor = userLocalDatabase.edit();
         spEditor.clear();
         spEditor.apply();
     }

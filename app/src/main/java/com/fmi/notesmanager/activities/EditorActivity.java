@@ -38,25 +38,25 @@ public class EditorActivity extends AppCompatActivity {
     private long id;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         title = findViewById(R.id.etTitle);
         content = findViewById(R.id.etEditor);
 
         final UserLocalStore userLocalStore = new UserLocalStore(this);
         user = userLocalStore.getLoggedInUser();
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         id = intent.getLongExtra("id", -1L);
 
         if (id != -1) {
             final ServerRequest serverRequest = new ServerRequest(restTemplate);
             serverRequest.retrieveSpecificNote(id, new Callback<Note>() {
                 @Override
-                public void done(Note retrievedNote) {
+                public void done(final Note retrievedNote) {
                     if (retrievedNote != null) {
                         title.setText(retrievedNote.getTitle());
                         content.setText(retrievedNote.getContent());
@@ -70,23 +70,23 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        final MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.app_bar_menu_editor, menu);
 
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        ServerRequest serverRequest = new ServerRequest(restTemplate);
+    public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
+        final ServerRequest serverRequest = new ServerRequest(restTemplate);
         switch (item.getItemId()) {
             case R.id.action_save:
                 if (id != -1) {
                     final Note updatedNote = new Note(id, title.getText().toString(), content.getText().toString());
                     serverRequest.updateNoteInBackground(updatedNote, new Callback() {
                         @Override
-                        public void done(Object result) {
+                        public void done(final Object result) {
                             startActivity(new Intent(EditorActivity.this, MainActivity.class));
                         }
                     });
@@ -94,7 +94,7 @@ public class EditorActivity extends AppCompatActivity {
                     final Note newNote = new Note(null, title.getText().toString(), content.getText().toString());
                     serverRequest.createNoteInBackground(user, newNote, new Callback() {
                         @Override
-                        public void done(Object result) {
+                        public void done(final Object result) {
                             startActivity(new Intent(EditorActivity.this, MainActivity.class));
                         }
                     });
@@ -104,7 +104,7 @@ public class EditorActivity extends AppCompatActivity {
                 if(id != -1) {
                     serverRequest.deleteNoteInBackground(id, new Callback() {
                         @Override
-                        public void done(Object result) {
+                        public void done(final Object result) {
                             startActivity(new Intent(EditorActivity.this, MainActivity.class));
                         }
                     });

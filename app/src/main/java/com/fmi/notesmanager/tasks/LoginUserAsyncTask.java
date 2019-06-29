@@ -26,7 +26,7 @@ public class LoginUserAsyncTask extends AsyncTask<Void, Void, User> {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public LoginUserAsyncTask(User user, ObjectMapper objectMapper, Callback<User> userCallback, RestTemplate restTemplate) {
+    public LoginUserAsyncTask(final User user, final ObjectMapper objectMapper, final Callback<User> userCallback, final RestTemplate restTemplate) {
         this.user = user;
         this.objectMapper = objectMapper;
         this.userCallback = userCallback;
@@ -34,16 +34,16 @@ public class LoginUserAsyncTask extends AsyncTask<Void, Void, User> {
     }
 
     @Override
-    protected User doInBackground(Void... voids) {
-        HttpEntity<String> request;
+    protected User doInBackground(final Void... voids) {
+        final HttpEntity<String> request;
         User returnedUser = null;
         try {
             request = new HttpEntity<>(objectMapper.writeValueAsString(user));
-            ResponseEntity<String> response = restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
+            final ResponseEntity<String> response = restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
             if (response != null && response.getBody() != null) {
                 returnedUser = objectMapper.readValue(response.getBody(), User.class);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
 
@@ -51,7 +51,7 @@ public class LoginUserAsyncTask extends AsyncTask<Void, Void, User> {
     }
 
     @Override
-    protected void onPostExecute(User user) {
+    protected void onPostExecute(final User user) {
         super.onPostExecute(user);
         userCallback.done(user);
     }

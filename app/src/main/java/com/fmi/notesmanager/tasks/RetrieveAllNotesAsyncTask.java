@@ -32,7 +32,7 @@ public class RetrieveAllNotesAsyncTask extends AsyncTask<Void, Void, List<Note>>
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public RetrieveAllNotesAsyncTask(User user, ObjectMapper objectMapper, Callback<List<Note>> userCallback, RestTemplate restTemplate) {
+    public RetrieveAllNotesAsyncTask(final User user, final ObjectMapper objectMapper, final Callback<List<Note>> userCallback, final RestTemplate restTemplate) {
         this.user = user;
         this.objectMapper = objectMapper;
         this.userCallback = userCallback;
@@ -40,16 +40,16 @@ public class RetrieveAllNotesAsyncTask extends AsyncTask<Void, Void, List<Note>>
     }
 
     @Override
-    protected List<Note> doInBackground(Void... voids) {
+    protected List<Note> doInBackground(final Void... voids) {
         List<Note> result = new ArrayList<>();
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
                 .queryParam("id", user.getId());
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        final HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        HttpEntity<String> response = restTemplate.exchange(
+        final HttpEntity<String> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
                 entity,
@@ -59,7 +59,7 @@ public class RetrieveAllNotesAsyncTask extends AsyncTask<Void, Void, List<Note>>
             try {
                 result = objectMapper.readValue(response.getBody(), new TypeReference<List<Note>>() {
                 });
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
@@ -68,7 +68,7 @@ public class RetrieveAllNotesAsyncTask extends AsyncTask<Void, Void, List<Note>>
     }
 
     @Override
-    protected void onPostExecute(List<Note> notes) {
+    protected void onPostExecute(final List<Note> notes) {
         super.onPostExecute(notes);
         userCallback.done(notes);
     }

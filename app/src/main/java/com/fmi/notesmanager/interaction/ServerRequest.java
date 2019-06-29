@@ -25,7 +25,7 @@ public class ServerRequest {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public ServerRequest(RestTemplate restTemplate) {
+    public ServerRequest(final RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
     }

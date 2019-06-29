@@ -23,20 +23,20 @@ public class DeleteNoteAsyncTask extends AsyncTask<Void, Void, Void> {
     private Callback<?> userCallback;
     private final RestTemplate restTemplate;
 
-    public DeleteNoteAsyncTask(long id, Callback<?> userCallback, RestTemplate restTemplate) {
+    public DeleteNoteAsyncTask(final long id, final Callback<?> userCallback, final RestTemplate restTemplate) {
         this.userCallback = userCallback;
         this.restTemplate = restTemplate;
         this.id = id;
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {
-        HttpHeaders headers = new HttpHeaders();
+    protected Void doInBackground(final Void... voids) {
+        final HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(SERVER_ADDRESS)
                 .queryParam("id", id);
 
-        HttpEntity<?> entity = new HttpEntity<>(headers);
+        final HttpEntity<?> entity = new HttpEntity<>(headers);
 
         restTemplate.exchange(
                 builder.toUriString(),
@@ -48,7 +48,7 @@ public class DeleteNoteAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(final Void aVoid) {
         userCallback.done(null);
         super.onPostExecute(aVoid);
     }
