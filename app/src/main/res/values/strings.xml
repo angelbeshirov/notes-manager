@@ -11,7 +11,7 @@
     <string name="repeat_password">Repeat password</string>
     <string name="register">Register</string>
     <string name="already_have_account">Already have an account? Click here to login.</string>
-    <string name="click_here_to_register">Click here to register</string>
+    <string name="click_here_to_register">Don\'t have an account? Click here to register</string>
     <string name="login">Login</string>
     <string name="new_note">New note</string>
 </resources>

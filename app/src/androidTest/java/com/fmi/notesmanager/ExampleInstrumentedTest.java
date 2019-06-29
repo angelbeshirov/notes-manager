@@ -22,13 +22,8 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
 
-    public static final String SERVER_ADDRESS = "http://localhost/register.php";
 
     @Test
     public void useAppContext() {
-        RestTemplate restTemplate = new RestTemplate();
-        User user = new User("angel", "123456", "test123@abv.bg");
-        HttpEntity<User> request = new HttpEntity<>(user);
-        restTemplate.postForObject(SERVER_ADDRESS, request, User.class);
     }
 }

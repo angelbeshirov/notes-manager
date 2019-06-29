@@ -17,17 +17,15 @@ public class Note implements Serializable {
     private Long id;
     private String title;
     private String content;
-    private String datetime;
 
     public Note() {
 
     }
 
-    public Note(Long id, String title, String content, String datetime) {
+    public Note(Long id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
-        this.datetime = datetime;
     }
 
     @JsonSetter("id")
@@ -45,11 +43,6 @@ public class Note implements Serializable {
         this.content = content;
     }
 
-    @JsonSetter("datetime")
-    public void setDatetime(String datetime) {
-        this.datetime = datetime;
-    }
-
     @JsonGetter("id")
     public Long getId() {
         return id;
@@ -65,18 +58,12 @@ public class Note implements Serializable {
         return content;
     }
 
-    @JsonGetter("datetime")
-    public String getDatetime() {
-        return datetime;
-    }
-
     @Override
     public String toString() {
         return "Note{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", datetime='" + datetime + '\'' +
                 '}';
     }
 }

@@ -83,7 +83,7 @@ public class EditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 if (id != -1) {
-                    final Note updatedNote = new Note(id, title.getText().toString(), content.getText().toString(), null);
+                    final Note updatedNote = new Note(id, title.getText().toString(), content.getText().toString());
                     serverRequest.updateNoteInBackground(updatedNote, new Callback() {
                         @Override
                         public void done(Object result) {
@@ -91,7 +91,7 @@ public class EditorActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    final Note newNote = new Note(null, title.getText().toString(), content.getText().toString(), null);
+                    final Note newNote = new Note(null, title.getText().toString(), content.getText().toString());
                     serverRequest.createNoteInBackground(user, newNote, new Callback() {
                         @Override
                         public void done(Object result) {
@@ -101,12 +101,14 @@ public class EditorActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.action_delete:
-                serverRequest.deleteNoteInBackground(id, new Callback() {
-                    @Override
-                    public void done(Object result) {
-                        startActivity(new Intent(EditorActivity.this, MainActivity.class));
-                    }
-                });
+                if(id != -1) {
+                    serverRequest.deleteNoteInBackground(id, new Callback() {
+                        @Override
+                        public void done(Object result) {
+                            startActivity(new Intent(EditorActivity.this, MainActivity.class));
+                        }
+                    });
+                }
         }
 
         return super.onOptionsItemSelected(item);
