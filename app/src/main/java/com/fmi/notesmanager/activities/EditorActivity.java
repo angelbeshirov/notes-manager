@@ -54,13 +54,10 @@ public class EditorActivity extends AppCompatActivity {
 
         if (id != -1) {
             final ServerRequest serverRequest = new ServerRequest(restTemplate);
-            serverRequest.retrieveSpecificNote(id, new Callback<Note>() {
-                @Override
-                public void done(final Note retrievedNote) {
-                    if (retrievedNote != null) {
-                        title.setText(retrievedNote.getTitle());
-                        content.setText(retrievedNote.getContent());
-                    }
+            serverRequest.retrieveSpecificNote(id, retrievedNote -> {
+                if (retrievedNote != null) {
+                    title.setText(retrievedNote.getTitle());
+                    content.setText(retrievedNote.getContent());
                 }
             });
         } else {
@@ -80,34 +77,20 @@ public class EditorActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
         final ServerRequest serverRequest = new ServerRequest(restTemplate);
+        final Callback startMainActivity = result -> startActivity(new Intent(EditorActivity.this, MainActivity.class));
         switch (item.getItemId()) {
             case R.id.action_save:
                 if (id != -1) {
                     final Note updatedNote = new Note(id, title.getText().toString(), content.getText().toString());
-                    serverRequest.updateNoteInBackground(updatedNote, new Callback() {
-                        @Override
-                        public void done(final Object result) {
-                            startActivity(new Intent(EditorActivity.this, MainActivity.class));
-                        }
-                    });
+                    serverRequest.updateNoteInBackground(updatedNote, startMainActivity);
                 } else {
                     final Note newNote = new Note(null, title.getText().toString(), content.getText().toString());
-                    serverRequest.createNoteInBackground(user, newNote, new Callback() {
-                        @Override
-                        public void done(final Object result) {
-                            startActivity(new Intent(EditorActivity.this, MainActivity.class));
-                        }
-                    });
+                    serverRequest.createNoteInBackground(user, newNote, startMainActivity);
                 }
                 break;
             case R.id.action_delete:
-                if(id != -1) {
-                    serverRequest.deleteNoteInBackground(id, new Callback() {
-                        @Override
-                        public void done(final Object result) {
-                            startActivity(new Intent(EditorActivity.this, MainActivity.class));
-                        }
-                    });
+                if (id != -1) {
+                    serverRequest.deleteNoteInBackground(id, startMainActivity);
                 }
         }
 

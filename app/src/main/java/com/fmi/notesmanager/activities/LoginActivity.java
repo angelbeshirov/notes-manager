@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fmi.notesmanager.R;
-import com.fmi.notesmanager.interaction.Callback;
 import com.fmi.notesmanager.interaction.ServerRequest;
 import com.fmi.notesmanager.interaction.UserLocalStore;
 import com.fmi.notesmanager.model.User;
@@ -63,14 +62,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void authenticate(final User user) {
         final ServerRequest serverRequest = new ServerRequest(restTemplate);
-        serverRequest.fetchUserDataInBackground(user, new Callback<User>() {
-            @Override
-            public void done(final User result) {
-                if (result == null) {
-                    showErrorMessage();
-                } else {
-                    loginUser(result);
-                }
+        serverRequest.fetchUserDataInBackground(user, result -> {
+            if (result == null) {
+                showErrorMessage();
+            } else {
+                loginUser(result);
             }
         });
     }

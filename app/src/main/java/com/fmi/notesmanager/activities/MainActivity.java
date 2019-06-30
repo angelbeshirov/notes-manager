@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.fmi.notesmanager.R;
-import com.fmi.notesmanager.interaction.Callback;
 import com.fmi.notesmanager.interaction.NotesAdapter;
 import com.fmi.notesmanager.interaction.ServerRequest;
 import com.fmi.notesmanager.interaction.UserLocalStore;
@@ -22,8 +19,6 @@ import com.fmi.notesmanager.model.Note;
 import com.fmi.notesmanager.model.User;
 
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**
  * This is the main activity which the user sees after log in. Overrides {@link AppCompatActivity#onCreate(Bundle)},
@@ -52,14 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.notesList);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-                final Note note = (Note) parent.getItemAtPosition(position);
-                final Intent intent = new Intent(MainActivity.this, EditorActivity.class);
-                intent.putExtra("id", note.getId());
-                startActivityForResult(intent, REQUEST_CODE_EDIT);
-            }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            final Note note = (Note) parent.getItemAtPosition(position);
+            final Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+            intent.putExtra("id", note.getId());
+            startActivityForResult(intent, REQUEST_CODE_EDIT);
         });
     }
 
@@ -106,12 +98,9 @@ public class MainActivity extends AppCompatActivity {
         final ServerRequest serverRequest = new ServerRequest(restTemplate);
         final User user = userLocalStore.getLoggedInUser();
 
-        serverRequest.retrieveAllNotesForUser(user, new Callback<List<Note>>() {
-            @Override
-            public void done(final List<Note> notes) {
-                final NotesAdapter notesAdapter = new NotesAdapter(MainActivity.this, android.R.layout.activity_list_item, notes);
-                listView.setAdapter(notesAdapter);
-            }
+        serverRequest.retrieveAllNotesForUser(user, notes -> {
+            final NotesAdapter notesAdapter = new NotesAdapter(MainActivity.this, android.R.layout.activity_list_item, notes);
+            listView.setAdapter(notesAdapter);
         });
     }
 }

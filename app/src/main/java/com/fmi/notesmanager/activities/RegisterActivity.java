@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fmi.notesmanager.R;
-import com.fmi.notesmanager.interaction.Callback;
 import com.fmi.notesmanager.interaction.ServerRequest;
 import com.fmi.notesmanager.model.User;
 
@@ -59,10 +58,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (validate()) {
                     final User user = new User(null, username, password, email);
                     final ServerRequest serverRequest = new ServerRequest(restTemplate);
-                    serverRequest.storeUserDataInBackground(user, new Callback() {
-                        @Override
-                        public void done(final Object result) {
+                    serverRequest.storeUserDataInBackground(user, result -> {
+                        if (result) {
                             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        } else {
+                            makeDialog("There is already an account with this email!");
                         }
                     });
                 }

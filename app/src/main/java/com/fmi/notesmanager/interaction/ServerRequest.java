@@ -30,7 +30,7 @@ public class ServerRequest {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void storeUserDataInBackground(final User user, final Callback userCallback) {
+    public void storeUserDataInBackground(final User user, final Callback<Boolean> userCallback) {
         new StoreUserAsyncTask(user, objectMapper, userCallback, restTemplate).execute();
     }
 

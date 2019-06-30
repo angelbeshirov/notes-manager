@@ -7,6 +7,7 @@ import com.fmi.notesmanager.interaction.Callback;
 import com.fmi.notesmanager.model.User;
 
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -16,15 +17,15 @@ import java.io.IOException;
  *
  * @author angel.beshirov
  */
-public class StoreUserAsyncTask extends AsyncTask<Void, Void, Void> {
+public class StoreUserAsyncTask extends AsyncTask<Void, Void, Boolean> {
     private static final String SERVER_ADDRESS = "http://192.168.0.101/api.php/register";
 
     private final User user;
-    private final Callback<?> userCallback;
+    private final Callback<Boolean> userCallback;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public StoreUserAsyncTask(final User user, final ObjectMapper objectMapper, final Callback<?> userCallback, final RestTemplate restTemplate) {
+    public StoreUserAsyncTask(final User user, final ObjectMapper objectMapper, final Callback<Boolean> userCallback, final RestTemplate restTemplate) {
         this.user = user;
         this.objectMapper = objectMapper;
         this.userCallback = userCallback;
@@ -32,21 +33,22 @@ public class StoreUserAsyncTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(final Void... voids) {
+    protected Boolean doInBackground(final Void... voids) {
         final HttpEntity<String> request;
+        ResponseEntity<String> response = null;
         try {
             request = new HttpEntity<>(objectMapper.writeValueAsString(user));
-            restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
+            response = restTemplate.postForEntity(SERVER_ADDRESS, request, String.class);
         } catch (final IOException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return response != null && response.getBody() != null;
     }
 
     @Override
-    protected void onPostExecute(final Void aVoid) {
-        userCallback.done(null);
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(final Boolean result) {
+        userCallback.done(result);
+        super.onPostExecute(result);
     }
 }
