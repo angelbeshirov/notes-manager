@@ -62,7 +62,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         if (result) {
                             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         } else {
-                            makeDialog("There is already an account with this email!");
+                            makeDialog("There is already an account with this username!");
                         }
                     });
                 }
